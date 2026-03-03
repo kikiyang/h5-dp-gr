@@ -59,6 +59,15 @@ FIFTH <- 82
 SIXTH <- 100
 SEVENTH <- 104
 
+# if moving 25 days earlier
+START_DAY <- START_DAY - 25
+SECOND <- SECOND - 25
+THIRD <- THIRD - 25
+FOURTH <- FOURTH - 25
+FIFTH <- FIFTH - 25
+SIXTH <- SIXTH - 25
+SEVENTH <- SEVENTH - 25
+
 # fit the model to the first time period without corpse removal
 simdf_ts <- map(1:nrow(param.grid), function(idx) {
   parms22 <- c(beta1 = 7.07/11.62, gamma = 1 / 11.62, mu = 0.812, 

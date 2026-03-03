@@ -48,7 +48,6 @@ mod5 <- function(times, outputV, parms){
   })
 }
 
-
 # arrival function
 load("data/arrival_func_params.RData")
 load("data/arrival_combined.RData")
@@ -509,35 +508,35 @@ sim_fits <- function(param_grid, data, sir_mod, arriv_func, arriv_year = 2022, a
 
 sim_fits(param.grid.fit, morta22, mod4, logistic_func)
 
-## constant infectious proportion of arriving individuals
-## all results are NaN
-# param.grid2 <- expand.grid(
-#   infect_prop = seq(0.1, 1, by = 0.1),
-#   R0 = seq(1, 10, by = 0.5),
-#   start_time = seq(0, 90, by = 5)
-# )
-# simdf_mod_ts22_infect_arriv <- map(1:nrow(param.grid2), function(idx) {
-#   params <- c(beta = param.grid2$R0[idx] * epi_params[epi_params$year == 2022, "gamma"], 
-#               gamma = epi_params[epi_params$year == 2022, "gamma"],
-#               mu = epi_params[epi_params$year == 2022, "mu"],
-#               infect_prop_in_arriv = param.grid2$infect_prop[idx],
-#               L = logistic_func[logistic_func$year == 2022, "L"], 
-#               a = logistic_func[logistic_func$year == 2022, "a"], 
-#               k = logistic_func[logistic_func$year == 2022, "k"])
-#   time_vec <- seq(param.grid2$start_time[idx], 120)
-#   init_pop <- c(S = 0, I = 0, R = 0, D = 0)
-#   sim <- as.data.frame(rk4(init_pop, time_vec, mod5, params))
-#   return(sim)
-# })
-# 
-# simdfs22_ia <- bind_rows(simdf_mod_ts22_infect_arriv, .id = "id")
-# simdfs22_ia$infect_prop <- param.grid2$infect_prop[as.numeric(simdfs22_ia$id)]
-# simdfs22_ia$R0 <- param.grid2$R0[as.numeric(simdfs22_ia$id)]
-# simdfs22_ia$start_time <- param.grid2$start_time[as.numeric(simdfs22_ia$id)]
-# 
-# simdfs22_ia_epi_size <- simdfs22_ia %>% filter(time == 120)
-# ggplot(data = simdfs22_ia_epi_size, aes(x = start_time, y = infect_prop, z = D)) +
-#   facet_wrap(~R0, labeller = labeller(R0 = label_both)) +
-#   geom_contour_filled() +
-#   labs(x = "Outbreak start day (julian date)", y = "Initial infectious individual, I(0)", 
-#        fill = "Final epidemic size\n(cumulative deaths)\nat day 120")
+## test hypothesis on whether arrival rate difference matters for the transmission dynamics
+
+## experiment 1: if 2022 has a 2021 strain / if 2021 has 2022 arrival rate
+load("data/2021.RData")
+load("data/topFits_nel_s48_2021.RData")
+bestfit21 <- top_fits[1,]
+## simulate the model using 2021 strain parameters and 2022 arrival parameters
+parms <- c(beta = bestfit21$R0*bestfit21$gamma, gamma = bestfit21$gamma, mu = bestfit21$mu,
+           L = logistic_func[logistic_func$year == 2022, "L"], 
+           a = logistic_func[logistic_func$year == 2022, "a"],
+           k = logistic_func[logistic_func$year == 2022, "k"])
+init_pop_size <- as.numeric(parms["L"] / (1 + exp(-(parms["a"] + parms["k"] * bestfit21$start_time))))
+init_pop <- c(S = init_pop_size * (1 - bestfit21$I0), 
+              I = init_pop_size * bestfit21$I0, R = 0, D = 0)
+time_vec <- seq(bestfit21$start_time, 120)
+sim <- as.data.frame(rk4(init_pop, time_vec, mod4, parms))
+# death: 150 (lower than actual 2021 deaths)
+
+## experiment 2: if 2021 has a 2022 strain / if 2022 has 2021 arrival rate
+load("data/2022.RData")
+load("data/top_fits_nel_s46_2022.RData")
+bestfit22 <- top_fits_nel_s46[1,]
+parms22 <- c(beta = bestfit22$R0*bestfit22$gamma, gamma = bestfit22$gamma, mu = bestfit22$mu,
+           L = logistic_func[logistic_func$year == 2022, "L"], 
+           a = logistic_func[logistic_func$year == 2022, "a"],
+           k = logistic_func[logistic_func$year == 2022, "k"])
+init_pop_size22 <- as.numeric(parms22["L"] / (1 + exp(-(parms22["a"] + parms22["k"] * bestfit22$start_time))))
+init_pop22 <- c(S = init_pop_size22 * (1 - bestfit22$I0), 
+              I = init_pop_size22 * bestfit22$I0, R = 0, D = 0)
+time_vec22 <- seq(bestfit22$start_time, 120)
+sim22 <- as.data.frame(rk4(init_pop22, time_vec22, mod4, parms22))
+# death: 1548 (lower than actual 2022 deaths but still significant)
