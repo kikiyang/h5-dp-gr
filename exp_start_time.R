@@ -357,18 +357,12 @@ ggplot(data = simdfs_epi_size22, aes(x = start_time, y = V0, z = D))+
   geom_contour_filled()
 
 p0 <- ggplot(data = simdfs_epi_size22 %>% filter(V0 == 1), aes(x = start_time)) +
-    # facet_wrap(~V0, label = label_both) +
-    geom_line(aes(y = D)) +
-    geom_line(aes(y = V0_num), linetype = 2) +
-    # geom_line(aes(y = V0_num, group = V0, color = V0), linetype = 2) +
-    # geom_line(aes(y = D, group = V0, color = V0)) +
-    # scale_color_viridis_c(name = "V0", option = "plasma") +
-    scale_y_continuous(name = "Final epidemic size (deaths)", 
+  geom_vline(xintercept = 49, linetype = 3) +  
+  geom_line(aes(y = D)) +
+  geom_line(aes(y = V0_num), linetype = 2) +
+  scale_y_continuous(name = "Final epidemic size (deaths)", 
                       sec.axis = sec_axis(~., name="Vaccinated number of pelicans")) +
-    # labs(x = "Outbreak start time (julian date)") +
-    # geom_hline(yintercept = max(simdfs_epi_size22$D)/2, linetype = 3, color = "grey") +
-    theme_minimal() +
-    theme(axis.title.x = element_blank())
+  theme_minimal() + theme(axis.title.x = element_blank()) 
 
 # ggsave("figures/vaccination.png", width = 4, height = 3)
 
@@ -376,6 +370,7 @@ library(gridExtra)
 library(cowplot)
 
 p1 <- ggplot(data = simdfs_epi_size22, aes(x = start_time)) +
+  geom_vline(xintercept = 49, linetype = 3) +
   geom_line(aes(y = D, group = V0, color = V0)) +
   scale_color_viridis_c(name = "V0", option = "plasma") +
   labs(y = "Final epidemic size (deaths)") +
@@ -383,6 +378,7 @@ p1 <- ggplot(data = simdfs_epi_size22, aes(x = start_time)) +
   theme(legend.position = "none", axis.title.x = element_blank(), axis.title.y.right = element_text())
 
 p2 <- ggplot(data = simdfs_epi_size22, aes(x = start_time)) +
+  geom_vline(xintercept = 49, linetype = 3) +
   geom_line(aes(y = V0_num, group = V0, color = V0)) +
   scale_color_viridis_c(name = "Initial vaccinated\nproportion", option = "plasma") +
   labs(x = "Outbreak start time (julian date)", 
@@ -416,7 +412,7 @@ vaccination_effectiveness <- simdfs_epi_size22 %>%
 View(vaccination_effectiveness)
 # Plot the rate of epidemic reduction vs vaccination coverage
 p3 <- ggplot(vaccination_effectiveness, aes(x = start_time, y = rate_per_100_vac)) +
-      geom_line() +
+      geom_vline(xintercept = 49, linetype = 3) + geom_line() + 
       labs(x = "Outbreak start time (julian date)", 
           y = "Deaths prevented\nper 100 vaccinated birds") +
       theme_minimal()
