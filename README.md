@@ -9,5 +9,5 @@ Data availability:
 2. [Virus genomic sequence and metadata hosted on GISAID, 2020-07-31 to 2022-08-01](https://doi.org/10.55876/gis8.260822fw)
 
 If you use the code, please cite:
-1. Yang, Qiqi, GitHub Repository, https://doi.org/10.5281/zenodo.18854448
+1. Qiqi Yang. (2026). kikiyang/h5-dp-gr: v1-in-review (Version in-review) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.18854449
 2. Yang, Qiqi, Olga Alexandrou, Ursula Höfle, Sara Minayo-Martín, Serafeim C. Chaintoutis, Evangelia Moutou, Chrysostomos I. Dovas, Louise Moncla, Bryan T. Grenfell, and Giorgos Catsadorakis. 2026. “Dynamics and Control of Highly Pathogenic H5 Avian Influenza in a Breeding Population of Dalmatian Pelicans (Pelecanus Crispus).” Epidemics 57 (100955): 100955.
